@@ -40,6 +40,7 @@ void lidarCallbackCustom(const livox_ros_driver2::CustomMsgConstPtr &msg) {
         // calculate the angle of each points and save in `normal.z`
         double distance = sqrt(p.x*p.x+p.y*p.y);
         double angle = atan2(p.z, distance);
+        p_new.normal_x = p.line;
         p_new.normal_z = angle*180/PI;      // angle in degree.
 
         // save points to v_pc;
@@ -55,9 +56,17 @@ void lidarCallbackCustom(const livox_ros_driver2::CustomMsgConstPtr &msg) {
 
     // print time-offset and anble
     if(g_printPoints){
-        for(int i=0; i<v_pc[0]->points.size(); ++i){
-            auto p = v_pc[0]->points[i];
-            ROS_INFO_STREAM("i=" << i << ", offset: " << p.intensity <<", angle: " << p.normal_z);
+        // for(int i=0; i<v_pc[0]->points.size(); ++i){
+        //     auto p = v_pc[0]->points[i];
+        //     ROS_INFO_STREAM("i=" << i << ", offset: " << p.intensity << ", line: " << p.normal_x << ", angle: " << p.normal_z);
+        // }
+        for(int i=0; i<msg->point_num; ++i){
+            auto p = msg->points[i];
+            if(abs(p.x)<0.01 || abs(p.y) < 0.01)         // skip too-near points.
+                continue;
+            double distance = sqrt(p.x*p.x+p.y*p.y);
+            double angle = atan2(p.z, distance)*180/PI;
+            ROS_INFO_STREAM("i=" << i << ", offset: " << p.offset_time << ", line: " << (int)(p.line) << ", angle: " << angle);
         }
     }
 }
