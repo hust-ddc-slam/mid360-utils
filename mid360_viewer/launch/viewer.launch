@@ -4,7 +4,7 @@
         <!--0-custom msg ,1 ros sensor msg pointcloud2 msg  -->
         <param name="msg_type" type="int" value="0"/>
         <!-- 0, not print points info; 1, print each points info -->
-        <param name="print_points" type="int" value="1"/>
+        <param name="print_points" type="int" value="0"/>
     </node>
 
     <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find mid360_viewer)/rviz/viewer.rviz" />

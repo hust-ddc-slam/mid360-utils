@@ -67,28 +67,30 @@ void lidarCallbackCustom(const livox_ros_driver2::CustomMsgConstPtr &msg) {
                 continue;
             double distance = sqrt(p.x*p.x+p.y*p.y);
             double angle = atan2(p.z, distance)*180/PI;
-            ROS_INFO_STREAM("i=" << i << ", offset: " << p.offset_time << ", line: " << (int)(p.line) << ", angle: " << angle);
+            // if(p.line==0)                               // print only one line.
+                ROS_INFO_STREAM("i=" << i << ", offset: " << p.offset_time << ", line: " << (int)(p.line) << ", angle: " << angle);
         }
     }
 
     // sort points by angles
-    // std::vector<std::pair<double, std::pair<int, int> > > angles;       // vector( angle, <index, line> )
-    // for(int i=0; i<msg->point_num; ++i){
-    //     auto p = msg->points[i];
-    //     if(abs(p.x)<0.01 || abs(p.y) < 0.01)         // skip too-near points.
-    //         continue;
-    //     double distance = sqrt(p.x*p.x+p.y*p.y);
-    //     double angle = atan2(p.z, distance)*180/PI;
-    //     auto index_line = std::pair<int, int>(i, p.line);
-    //     angles.push_back(std::pair<double, std::pair<int,int>> (angle, index_line));
-    // }
-    // sort(angles.begin(), angles.end(), [](std::pair<double, std::pair<int,int>> p1, std::pair<double, std::pair<int,int>> p2){
-    //     return p1.first < p2.first;
-    // });
-    // ROS_ERROR_STREAM("========================");
-    // for(auto p : angles){
-    //     ROS_INFO_STREAM("Angle: " << p.first <<", index: " << p.second.first <<", line: " << p.second.second);
-    // }
+    std::vector<std::pair<double, std::pair<int, int> > > angles;       // vector( angle, <index, line> )
+    for(int i=0; i<msg->point_num; ++i){
+        auto p = msg->points[i];
+        if(abs(p.x)<0.01 || abs(p.y) < 0.01)         // skip too-near points.
+            continue;
+        double distance = sqrt(p.x*p.x+p.y*p.y);
+        double angle = atan2(p.z, distance)*180/PI;
+        auto index_line = std::pair<int, int>(i, p.line);
+        angles.push_back(std::pair<double, std::pair<int,int>> (angle, index_line));
+    }
+    sort(angles.begin(), angles.end(), [](std::pair<double, std::pair<int,int>> p1, std::pair<double, std::pair<int,int>> p2){
+        return p1.first < p2.first;
+    });
+    ROS_ERROR_STREAM("========================");
+    for(auto p : angles){
+        // if(p.second.second == 0)        // print only one line
+            ROS_INFO_STREAM("Angle: " << p.first <<", index: " << p.second.first <<", line: " << p.second.second);
+    }
 }
 
 
