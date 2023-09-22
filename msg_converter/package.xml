@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>msg_converter</name>
+  <version>1.0.0</version>
+  <description>Convert Mid360 customMsg format to PointXYZI</description>
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <!-- Example:  -->
+  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+  <maintainer email="jfjxxdy2007@126.com">Dong Yan</maintainer>
+  <license>GPLv3</license>
+  <author email="jfjxxdy2007@126.com">Dong Yan</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>rosbag</build_depend>
+  <build_depend>pcl_ros</build_depend>
+
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>rosbag</build_export_depend>
+  <build_export_depend>pcl_ros</build_export_depend>
+
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>rosbag</exec_depend>
+  <exec_depend>pcl_ros</exec_depend>
+
+  <depend>sensor_msgs</depend>
+
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
