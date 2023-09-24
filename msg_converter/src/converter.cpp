@@ -41,10 +41,11 @@ void lidarCallbackCustom(const livox_ros_driver2::CustomMsgConstPtr &msg) {
         return p1.second < p2.second;
     });
 
-    // calcualte ring and offset-time, and save to intensity;
+    // calcualte ring and offset-time, and save to intensity. Save to each lines.
     double rad_to_deg = 180/PI;
     const double vertical_angle_resolution = (fov_top - fov_bottom)/OUTPUT_SCAN_LINE;
-    pcl::PointCloud<pcl::PointXYZI> pc_new;
+
+    pcl::PointCloud<pcl::PointXYZI> v_pc_rings[OUTPUT_SCAN_LINE];   // use N lines to save each ring first, and then save them to a new point cloud.
     for(const my_pair& idx_yaw : index_yaw_pair){
         auto p = msg->points[idx_yaw.first];
 
@@ -59,8 +60,17 @@ void lidarCallbackCustom(const livox_ros_driver2::CustomMsgConstPtr &msg) {
         p_new.z = p.z;
         p_new.intensity = line + float(p.offset_time)*1e-9*LIDAR_FREQUENCY;
         // ROS_INFO_STREAM("line: "<< line <<", offset_time" << p.offset_time <<", intensity: " << p_new.intensity);
-        pc_new.points.push_back(p_new);
+        v_pc_rings[line].points.push_back(p_new);          // save to each rings.
     }
+
+    // merge rings into the output pc_new;
+    pcl::PointCloud<pcl::PointXYZI> pc_new;
+    for(int i=0; i<OUTPUT_SCAN_LINE; ++i){
+        for(auto p:v_pc_rings[i].points)
+            pc_new.points.push_back(p);
+    }
+
+    // convert to sensor_msg.
     sensor_msgs::PointCloud2 pc_msg;
     pcl::toROSMsg(pc_new, pc_msg);
     pc_msg.header = msg->header;
